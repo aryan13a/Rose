@@ -3,85 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Rose Day</title>
+    <title>Rose Day Surprise</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            background-color: #fce4ec;
             margin: 0;
-            overflow: hidden;
+            font-family: 'Arial', sans-serif;
         }
-        .envelope {
+
+        .envelope-wrapper {
+            position: relative;
             width: 300px;
             height: 200px;
-            background-color: #fff;
-            border: 2px solid #ccc;
-            position: relative;
             cursor: pointer;
-            perspective: 1000px;
         }
+
+        /* Shake animation when closed */
+        .shaking {
+            animation: shake 0.8s infinite;
+        }
+
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(2deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-2deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* The Envelope Body */
+        .envelope {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            background: #f06292;
+            border-radius: 0 0 5px 5px;
+            z-index: 10;
+            overflow: hidden; /* This hides the letter when it is inside */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* The Flap */
         .flap {
             position: absolute;
-            top: -20px;
+            top: 0;
             left: 0;
-            width: 100%;
-            height: 20px;
-            background-color: #fff;
-            border: 2px solid #ccc;
-            border-bottom: none;
-            clip-path: polygon(0 0, 50% 100%, 100% 0);
+            width: 0;
+            height: 0;
+            border-top: 110px solid #d81b60;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
             transform-origin: top;
-            transition: transform 0.5s ease;
+            transition: transform 0.4s ease;
+            z-index: 40; /* Stays on top of everything when closed */
         }
-        .envelope.open .flap {
-            transform: rotateX(180deg);
-        }
+
+        /* The Letter - Hidden deep inside initially */
         .letter {
             position: absolute;
-            top: 20px;
-            left: 25px;
-            width: 250px;
-            height: 160px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            padding: 10px;
+            top: 100%; /* Start below the envelope view */
+            left: 15px;
+            width: 270px;
+            background: white;
+            padding: 25px 20px;
+            box-sizing: border-box;
             text-align: center;
-            transform: translateY(-100%);
-            opacity: 0;
-            transition: transform 0.5s ease, opacity 0.5s ease;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            transition: transform 0.6s ease-in-out, top 0.6s ease-in-out;
+            z-index: 20; 
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
         }
-        .envelope.open .letter {
-            transform: translateY(0);
-            opacity: 1;
+
+        .letter p {
+            font-size: 15px;
+            color: #333;
+            line-height: 1.5;
+            margin: 5px 0;
+            font-style: italic;
         }
+
         .rose {
             font-size: 40px;
-            color: red;
-            margin-bottom: 10px;
+            margin-top: 10px;
+            display: block;
+        }
+
+        /* --- OPEN STATE --- */
+        .envelope-wrapper.open .shaking {
+            animation: none;
+        }
+
+        .envelope-wrapper.open .flap {
+            transform: rotateX(180deg);
+            z-index: 5; /* Flip moves back */
+        }
+
+        .envelope-wrapper.open .letter {
+            top: -150px; /* Letter pops out of the top */
+            transform: scale(1.1);
+            z-index: 50; /* Comes to the very front */
+        }
+
+        .tap-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            z-index: 45;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <div class="envelope" id="envelope">
-        <div class="flap"></div>
-        <div class="letter" id="letter">
-            <div class="rose">🌹</div>
-            <h2>Happy Rose Day!</h2>
-            <p>I can't be with you right now as we are too far, I wanted give you a hand made letter but i can't give it to you today so I'm writing it here</p>
+
+    <div class="envelope-wrapper" id="mainWrapper" onclick="handleOpen()">
+        <div class="shaking">
+            <div class="flap"></div>
+            <div class="envelope">
+                <div class="tap-text">TAP TO OPEN</div>
+                <div class="letter">
+                    <p><strong>Happy Rose Day!</strong></p>
+                    <p>I can't be with you right now as we are too far.</p>
+                    <p>I wanted to give you a hand made letter but i can't give it to you today so I'm writing it here.</p>
+                    <span class="rose">🌹</span>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        const envelope = document.getElementById('envelope');
-
-        envelope.addEventListener('click', () => {
-            envelope.classList.add('open');
-        });
+        function handleOpen() {
+            document.getElementById('mainWrapper').classList.toggle('open');
+        }
     </script>
+
 </body>
 </html>
