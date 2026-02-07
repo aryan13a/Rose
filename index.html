@@ -22,10 +22,9 @@
             border: 2px solid #ccc;
             position: relative;
             cursor: pointer;
-            transition: transform 0.3s ease;
+            perspective: 1000px;
         }
-        .envelope::before {
-            content: '';
+        .flap {
             position: absolute;
             top: -20px;
             left: 0;
@@ -35,31 +34,33 @@
             border: 2px solid #ccc;
             border-bottom: none;
             clip-path: polygon(0 0, 50% 100%, 100% 0);
+            transform-origin: top;
+            transition: transform 0.5s ease;
         }
-        .shake {
-            animation: shake 0.5s ease-in-out;
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
+        .envelope.open .flap {
+            transform: rotateX(180deg);
         }
         .letter {
-            display: none;
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            border: 2px solid #ccc;
-            padding: 20px;
+            top: 20px;
+            left: 25px;
             width: 250px;
+            height: 160px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 10px;
             text-align: center;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            transform: translateY(-100%);
+            opacity: 0;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        .envelope.open .letter {
+            transform: translateY(0);
+            opacity: 1;
         }
         .rose {
-            font-size: 50px;
+            font-size: 40px;
             color: red;
             margin-bottom: 10px;
         }
@@ -67,6 +68,7 @@
 </head>
 <body>
     <div class="envelope" id="envelope">
+        <div class="flap"></div>
         <div class="letter" id="letter">
             <div class="rose">🌹</div>
             <h2>Happy Rose Day!</h2>
@@ -76,14 +78,9 @@
 
     <script>
         const envelope = document.getElementById('envelope');
-        const letter = document.getElementById('letter');
 
         envelope.addEventListener('click', () => {
-            envelope.classList.add('shake');
-            setTimeout(() => {
-                envelope.style.display = 'none';
-                letter.style.display = 'block';
-            }, 500);
+            envelope.classList.add('open');
         });
     </script>
 </body>
