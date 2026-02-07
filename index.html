@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Letter For You</title>
+    <title>A Special Surprise</title>
     <style>
         body {
             background-color: #fce4ec;
@@ -13,143 +13,133 @@
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            font-family: 'Georgia', serif;
+            font-family: 'Arial', sans-serif;
         }
 
-        .container {
+        .envelope-wrapper {
             position: relative;
             width: 300px;
             height: 200px;
             cursor: pointer;
+            transition: 0.5s;
         }
 
-        /* Envelope Base */
-        .envelope {
+        /* Continuous Shake */
+        .shake {
+            animation: shakeAnim 1s infinite;
+        }
+
+        @keyframes shakeAnim {
+            0%, 100% { transform: rotate(0); }
+            25% { transform: rotate(2deg); }
+            75% { transform: rotate(-2deg); }
+        }
+
+        /* The Pink Envelope Base */
+        .envelope-back {
             position: relative;
             width: 300px;
             height: 200px;
             background-color: #f06292;
             border-radius: 0 0 10px 10px;
+            z-index: 10;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            z-index: 2;
         }
 
-        /* Top Flap */
+        /* The Flap */
         .flap {
             position: absolute;
             top: 0;
-            width: 0;
-            height: 0;
+            left: 0;
             border-top: 110px solid #d81b60;
             border-left: 150px solid transparent;
             border-right: 150px solid transparent;
             transform-origin: top;
-            transition: transform 0.5s ease;
-            z-index: 4;
+            transition: 0.6s;
+            z-index: 30; /* Starts on top */
         }
 
-        /* The Heart Sticker */
-        .heart {
-            position: absolute;
-            top: 90px;
-            left: 135px;
-            width: 30px;
-            height: 30px;
-            background-color: #ff1744;
-            transform: rotate(45deg);
-            z-index: 5;
-            transition: 0.5s;
-        }
-        .heart::before, .heart::after {
-            content: "";
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background-color: #ff1744;
-            border-radius: 50%;
-        }
-        .heart::before { left: -15px; }
-        .heart::after { top: -15px; }
-
-        /* The Letter - Hidden initially */
+        /* THE LETTER - The most important part */
         .letter {
             position: absolute;
             top: 10px;
-            left: 20px;
-            width: 260px;
-            height: 180px;
-            background-color: white;
-            padding: 20px;
+            left: 15px;
+            width: 270px;
+            min-height: 180px;
+            background: white;
+            padding: 25px 20px;
             box-sizing: border-box;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: all 0.7s ease;
-            z-index: 1; /* Hidden behind envelope */
-            opacity: 0;
+            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+            transition: all 0.8s ease-in-out;
+            z-index: 5; /* Hidden behind flap and envelope */
+            opacity: 0; /* Fully hidden initially */
+            visibility: hidden;
         }
 
         .letter p {
-            font-size: 14px;
-            color: #444;
-            line-height: 1.6;
-            margin: 0;
+            color: #333;
+            font-size: 15px;
+            line-height: 1.5;
+            margin: 5px 0;
         }
 
         .rose {
-            font-size: 30px;
+            font-size: 40px;
             display: block;
             margin-top: 10px;
         }
 
-        /* --- OPEN ANIMATION --- */
-        .container.open .flap {
+        /* --- OPEN STATE --- */
+        .envelope-wrapper.open .shake {
+            animation: none;
+        }
+
+        .envelope-wrapper.open .flap {
             transform: rotateX(180deg);
-            z-index: 0;
+            z-index: 5; /* Moves flap behind everything */
         }
 
-        .container.open .letter {
-            transform: translateY(-160px) scale(1.1); /* Slips out the top */
+        .envelope-wrapper.open .letter {
             opacity: 1;
-            z-index: 10;
-            height: auto;
-            min-height: 250px;
+            visibility: visible;
+            transform: translateY(-160px) scale(1.1); /* Jumps UP and gets bigger */
+            z-index: 100; /* Moves to the absolute front */
         }
 
-        .container.open .heart {
-            opacity: 0;
-        }
-
-        /* Shake effect while closed */
-        .container:not(.open) {
-            animation: shake 1.5s infinite;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: rotate(0); }
-            20% { transform: rotate(1deg); }
-            40% { transform: rotate(-1deg); }
-            60% { transform: rotate(1deg); }
-            80% { transform: rotate(-1deg); }
+        .click-text {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            z-index: 40;
+            letter-spacing: 1px;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="container" id="card" onclick="openCard()">
-        <div class="flap"></div>
-        <div class="heart"></div>
-        <div class="envelope"></div>
-        
-        <div class="letter">
-            <p><strong>Happy Rose Day!</strong></p>
-            <br>
-            <p>I can't be with you right now as we are too far. I wanted to give you a hand made letter but I can't give it to you today so I'm writing it here.</p>
-            <span class="rose">🌹</span>
+    <div class="envelope-wrapper" id="card" onclick="openLetter()">
+        <div class="shake">
+            <div class="flap"></div>
+            <div class="envelope-back">
+                <div class="click-text">OPEN ME</div>
+            </div>
+            
+            <div class="letter">
+                <p><strong>Happy Rose Day!</strong></p>
+                <p>I can't be with you right now as we are too far.</p>
+                <p>I wanted to give you a hand made letter but I can't give it to you today so I'm writing it here.</p>
+                <span class="rose">🌹</span>
+            </div>
         </div>
     </div>
 
     <script>
-        function openCard() {
+        function openLetter() {
             document.getElementById('card').classList.toggle('open');
         }
     </script>
