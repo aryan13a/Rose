@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Surprise</title>
+    <style>
+        :root {
+            --bg-color: #fce4ec;
+            --envelope-color: #f06292;
+            --envelope-dark: #d81b60;
+            --paper-color: #ffffff;
+            --text-color: #444;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Envelope Container */
+        .envelope-wrapper {
+            position: relative;
+            cursor: pointer;
+            animation: shake 0.5s infinite;
+        }
+
+        /* Shaking Animation */
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(3deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-3deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .envelope {
+            position: relative;
+            width: 250px;
+            height: 180px;
+            background: var(--envelope-color);
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .envelope::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            z-index: 2;
+            border-top: 100px solid var(--envelope-dark);
+            border-left: 125px solid transparent;
+            border-right: 125px solid transparent;
+            transform-origin: top;
+            transition: transform 0.4s 0.4s;
+        }
+
+        /* The Heart Sticker */
+        .heart {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            background: #ff1744;
+            z-index: 4;
+            transform: translate(-50%, -20%) rotate(45deg);
+            transition: transform 0.5s 0.8s;
+        }
+        .heart:before, .heart:after {
+            content: "";
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: #ff1744;
+            border-radius: 50%;
+        }
+        .heart:before { left: -15px; }
+        .heart:after { top: -15px; }
+
+        /* The Letter */
+        .letter {
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+            width: 230px;
+            height: 160px;
+            background: var(--paper-color);
+            padding: 20px;
+            box-sizing: border-box;
+            transition: transform 0.6s, bottom 0.6s;
+            z-index: 1;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-color);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* Open State */
+        .envelope-wrapper.open {
+            animation: none;
+        }
+
+        .envelope-wrapper.open .envelope::before {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        .envelope-wrapper.open .letter {
+            bottom: 100px;
+            height: auto;
+            min-height: 250px;
+            z-index: 5;
+            transform: scale(1.2);
+        }
+
+        .envelope-wrapper.open .heart {
+            opacity: 0;
+        }
+
+        .rose {
+            font-size: 40px;
+            margin-top: 10px;
+            display: block;
+        }
+
+        p {
+            line-height: 1.5;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="envelope-wrapper" id="envelope" onclick="openLetter()">
+        <div class="envelope">
+            <div class="heart"></div>
+        </div>
+        <div class="letter">
+            <p><strong>Happy Rose Day!</strong></p>
+            <p>I can't be with you right now as we are too far. I wanted to give you a hand-made letter, but I can't give it to you today, so I'm writing it here.</p>
+            <p>You mean the world to me.</p>
+            <span class="rose">🌹</span>
+        </div>
+    </div>
+
+    <script>
+        function openLetter() {
+            document.getElementById('envelope').classList.toggle('open');
+        }
+    </script>
+</body>
+</html>
+
