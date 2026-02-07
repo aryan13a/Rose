@@ -10,138 +10,146 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh; /* Changed to min-height */
             margin: 0;
-            overflow: hidden;
             font-family: 'Arial', sans-serif;
+            overflow: hidden;
         }
 
-        .envelope-wrapper {
+        .container {
             position: relative;
             width: 300px;
             height: 200px;
+        }
+
+        /* The Envelope Group */
+        .envelope-wrapper {
+            position: absolute;
+            width: 300px;
+            height: 200px;
             cursor: pointer;
-            transition: 0.5s;
+            z-index: 20;
         }
 
-        /* Continuous Shake */
+        /* Animation for shaking */
         .shake {
-            animation: shakeAnim 1s infinite;
+            animation: shake 1.2s infinite;
         }
 
-        @keyframes shakeAnim {
-            0%, 100% { transform: rotate(0); }
-            25% { transform: rotate(2deg); }
-            75% { transform: rotate(-2deg); }
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            10% { transform: rotate(3deg); }
+            20% { transform: rotate(-3deg); }
+            30% { transform: rotate(3deg); }
+            40% { transform: rotate(0deg); }
         }
 
-        /* The Pink Envelope Base */
-        .envelope-back {
-            position: relative;
+        /* Front Flap */
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-top: 110px solid #d81b60;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            transform-origin: top;
+            transition: transform 0.6s ease;
+            z-index: 30;
+        }
+
+        /* Main Pink Envelope Body */
+        .envelope-body {
+            position: absolute;
+            bottom: 0;
             width: 300px;
             height: 200px;
             background-color: #f06292;
             border-radius: 0 0 10px 10px;
             z-index: 10;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* The Flap */
-        .flap {
-            position: absolute;
-            top: 0;
-            left: 0;
-            border-top: 110px solid #d81b60;
-            border-left: 150px solid transparent;
-            border-right: 150px solid transparent;
-            transform-origin: top;
-            transition: 0.6s;
-            z-index: 30; /* Starts on top */
-        }
-
-        /* THE LETTER - The most important part */
+        /* The Letter - Positioned behind the envelope body */
         .letter {
             position: absolute;
             top: 10px;
             left: 15px;
             width: 270px;
-            min-height: 180px;
             background: white;
-            padding: 25px 20px;
+            padding: 20px;
             box-sizing: border-box;
             text-align: center;
-            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
             transition: all 0.8s ease-in-out;
-            z-index: 5; /* Hidden behind flap and envelope */
-            opacity: 0; /* Fully hidden initially */
-            visibility: hidden;
+            z-index: 5; /* Behind envelope body */
+            opacity: 0;
+            pointer-events: none; /* Can't click it until it's open */
         }
 
         .letter p {
+            font-size: 14px;
             color: #333;
-            font-size: 15px;
-            line-height: 1.5;
-            margin: 5px 0;
+            line-height: 1.4;
+            margin: 8px 0;
         }
 
         .rose {
             font-size: 40px;
             display: block;
-            margin-top: 10px;
         }
 
-        /* --- OPEN STATE --- */
-        .envelope-wrapper.open .shake {
+        /* --- OPEN LOGIC --- */
+        .container.open .flap {
+            transform: rotateX(180deg);
+            z-index: 5;
+        }
+
+        .container.open .letter {
+            opacity: 1;
+            transform: translateY(-180px); /* Slips out of the top */
+            z-index: 50; /* Moves to the front */
+            pointer-events: auto;
+        }
+
+        .container.open .shake {
             animation: none;
         }
 
-        .envelope-wrapper.open .flap {
-            transform: rotateX(180deg);
-            z-index: 5; /* Moves flap behind everything */
-        }
-
-        .envelope-wrapper.open .letter {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(-160px) scale(1.1); /* Jumps UP and gets bigger */
-            z-index: 100; /* Moves to the absolute front */
-        }
-
-        .click-text {
-            position: absolute;
-            top: 60%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        .open-text {
             color: white;
             font-weight: bold;
-            z-index: 40;
-            letter-spacing: 1px;
+            font-size: 18px;
             pointer-events: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="envelope-wrapper" id="card" onclick="openLetter()">
-        <div class="shake">
+    <div class="container" id="mainContainer">
+        <div class="envelope-wrapper shake" onclick="toggleLetter()">
             <div class="flap"></div>
-            <div class="envelope-back">
-                <div class="click-text">OPEN ME</div>
+            <div class="envelope-body">
+                <span class="open-text">TAP TO OPEN</span>
             </div>
-            
-            <div class="letter">
-                <p><strong>Happy Rose Day!</strong></p>
-                <p>I can't be with you right now as we are too far.</p>
-                <p>I wanted to give you a hand made letter but I can't give it to you today so I'm writing it here.</p>
-                <p>I was going to send you a whole bouquet, but I realized no rose could actually compete with your smile. So, here’s a digital one and a big 'Happy Rose Day' instead!</p>
-                <span class="rose">🌹</span>
-            </div>
+        </div>
+
+        <div class="letter">
+            <p><strong>Happy Rose Day!</strong></p>
+            <p>I can't be with you right now as we are too far.</p>
+            <p>I wanted to give you a hand made letter but I can't give it to you today so I'm writing it here.</p>
+            <p>I was going to send you a whole bouquet, but I realized no rose could actually compete with your smile.</p>
+            <span class="rose">🌹</span>
         </div>
     </div>
 
     <script>
-        function openLetter() {
-            document.getElementById('card').classList.toggle('open');
+        function toggleLetter() {
+            document.getElementById('mainContainer').classList.toggle('open');
         }
     </script>
 
