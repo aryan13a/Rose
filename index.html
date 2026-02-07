@@ -13,118 +13,138 @@
             background-color: #fae1dd;
             margin: 0;
             font-family: 'Arial', sans-serif;
-            overflow: hidden;
         }
 
-        .container {
+        /* The clickable wrapper */
+        .wrapper {
             position: relative;
             width: 300px;
             height: 200px;
+            cursor: pointer;
         }
 
-        /* The Envelope Base */
+        /* Shake animation for the closed envelope */
+        .shake {
+            animation: shakeAnim 0.8s infinite;
+        }
+
+        @keyframes shakeAnim {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(2px, 2px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        /* Envelope Base */
         .envelope {
-            position: absolute;
-            width: 100%;
-            height: 100%;
+            position: relative;
+            width: 300px;
+            height: 200px;
             background: #f06292;
-            z-index: 10;
-            cursor: pointer;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            animation: shake 0.6s infinite;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             border-radius: 0 0 5px 5px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 10;
         }
 
         /* The Flap */
-        .envelope::before {
-            content: "";
+        .flap {
             position: absolute;
             top: 0;
-            z-index: 30;
+            left: 0;
             border-top: 110px solid #d81b60;
             border-left: 150px solid transparent;
             border-right: 150px solid transparent;
             transform-origin: top;
-            transition: all 0.5s ease;
+            transition: transform 0.5s ease;
+            z-index: 30; /* Stays on top until opened */
         }
 
-        /* The Letter - Hidden inside initially */
+        /* The Letter */
         .letter {
             position: absolute;
-            top: 5px; /* Sits inside the envelope */
+            top: 10px;
             left: 15px;
             width: 270px;
-            height: 180px; /* Matches envelope height initially */
+            height: 180px;
             background: white;
             padding: 20px;
-            text-align: center;
-            transition: all 0.7s ease-in-out;
-            z-index: 5; /* Behind the flap */
             box-sizing: border-box;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            overflow: hidden; /* Keeps text contained */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            text-align: center;
+            transition: all 0.8s ease;
+            z-index: 20;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
         .letter p {
             font-size: 14px;
             color: #333;
-            line-height: 1.4;
+            line-height: 1.5;
             margin: 5px 0;
-            opacity: 0; /* Hidden until open */
-            transition: opacity 0.3s;
         }
 
         .rose {
-            font-size: 30px;
-            margin-top: 5px;
+            font-size: 35px;
+            margin-top: 10px;
         }
 
-        /* OPEN STATE */
-        .container.active .envelope {
+        /* --- OPEN STATE STYLES --- */
+        .wrapper.open .shake {
             animation: none;
         }
 
-        .container.active .envelope::before {
+        .wrapper.open .flap {
             transform: rotateX(180deg);
-            z-index: 0; /* Flap goes behind everything */
+            z-index: 5; /* Moves flap behind the letter */
         }
 
-        .container.active .letter {
-            transform: translateY(-120px); /* Pulls letter up */
-            height: auto; /* Allows letter to be as tall as the text */
-            min-height: 280px; 
-            z-index: 50; /* Brings it to the very front */
-            opacity: 1;
-            padding: 25px 20px;
+        .wrapper.open .letter {
+            transform: translateY(-130px); /* Move UP */
+            height: auto;
+            min-height: 250px;
+            z-index: 40; /* Bring letter to very front */
         }
 
-        .container.active .letter p {
-            opacity: 1;
-            transition-delay: 0.4s;
-        }
-
-        @keyframes shake {
-            0% { transform: rotate(0); }
-            25% { transform: rotate(2deg); }
-            75% { transform: rotate(-2deg); }
-            100% { transform: rotate(0); }
-        }
-
-        .click-text {
+        .click-hint {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
             color: white;
             font-weight: bold;
-            z-index: 40;
-            pointer-events: none;
+            z-index: 35;
+            pointer-events: none; /* Allows click to pass through to wrapper */
         }
     </style>
 </head>
 <body>
 
-    <div class="container" id="card" onclick="toggleOpen()">
-        <div class="envelope">
+    <div class="wrapper" id="envelopeWrapper" onclick="openMe()">
+        
+        <div class="shake">
+            <div class="envelope">
+                <div class="flap"></div>
+                <div class="click-hint">TAP TO OPEN</div>
+            </div>
+
+            <div class="letter" id="letterBody">
+                <p><strong>Happy Rose Day!</strong></p>
+                <p>I can't be with you right now as we are too far.</p>
+                <p>I wanted to give you a hand made letter but i can't give it to you today so I'm writing it here.</p>
+                <div class="rose">🌹</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function openMe() {
+            // This adds the "open" class to the wrapper
+            const wrapper = document.getElementById('envelopeWrapper');
+            wrapper.classList.toggle('open');
+        }
+    </script>
+
+</body>
+</html>
